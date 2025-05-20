@@ -1,9 +1,14 @@
 import * as vscode from 'vscode'
 import { findConfigFile, getConfig } from './config'
 
+interface FixResult {
+  success: boolean
+  error?: string
+}
+
 export class YamlFixer {
   public async fixDocument(document: vscode.TextDocument): Promise<boolean> {
-    if (document.languageId !== 'yaml' && document.languageId !== 'yml') {
+    if (!this.shouldFixDocument(document)) {
       return false
     }
 
@@ -12,54 +17,84 @@ export class YamlFixer {
       return false
     }
 
-    const config = getConfig()
-    const configFile = await findConfigFile(workspaceFolder)
-
     try {
-      const { execa } = await import('execa')
-      const args = []
-      if (configFile) {
-        args.push('--config-file', configFile)
-      }
-      args.push(document.uri.fsPath)
-
-      const result = await execa(config.yamlfixPath, args, { reject: false })
-
-      if (result.exitCode === 0) {
-        return true
-      }
-
-      this.processError(document, result.stderr || 'Unknown error')
-      return false
-    } catch (error) {
-      if (error instanceof Error) {
-        this.processError(document, error.message)
-      }
-      return false
+      const result = await this.runYamlfix(document, workspaceFolder)
+      return this.handleFixResult(document, result)
+    } catch (error: unknown) {
+      return this.handleFixError(document, error)
     }
   }
 
-  private processError(document: vscode.TextDocument, errorMessage: string): void {
+  private shouldFixDocument(document: vscode.TextDocument): boolean {
+    const isUnSaved = document.isUntitled
+    const isYaml = document.languageId === 'yaml' || document.languageId === 'yml'
+
+    return !isUnSaved && isYaml
+  }
+
+  private async runYamlfix(
+    document: vscode.TextDocument,
+    workspaceFolder: vscode.WorkspaceFolder
+  ): Promise<FixResult> {
+    const config = getConfig()
+    const configFile = await findConfigFile(workspaceFolder)
+    const { execa } = await import('execa')
+
+    const args = []
+    if (configFile) {
+      args.push('--config-file', configFile)
+    }
+    args.push(document.uri.fsPath)
+
+    const result = await execa(config.yamlfixPath, args, { reject: false })
+    return {
+      success: result.exitCode === 0,
+      error: result.stderr,
+    }
+  }
+
+  private handleFixResult(document: vscode.TextDocument, result: FixResult): boolean {
+    if (result.success) {
+      return true
+    }
+
+    this.showError(document, result.error || 'Unknown error')
+    return false
+  }
+
+  private handleFixError(document: vscode.TextDocument, error: unknown): boolean {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    this.showError(document, errorMessage)
+    return false
+  }
+
+  private showError(document: vscode.TextDocument, errorMessage: string): void {
     vscode.window.showErrorMessage(`YAML fixing failed: ${errorMessage}`)
   }
 
   public async fixWorkspace(): Promise<void> {
+    const yamlFiles = await this.findYamlFiles()
+    await this.fixAllFiles(yamlFiles)
+    this.showCompletionMessage()
+  }
+
+  private async findYamlFiles(): Promise<vscode.Uri[]> {
     const workspaceFolders = vscode.workspace.workspaceFolders
     if (!workspaceFolders) {
-      return
+      return []
     }
 
-    const yamlFiles = await vscode.workspace.findFiles('**/*.{yaml,yml}')
+    return vscode.workspace.findFiles('**/*.{yaml,yml}')
+  }
 
-    for (const file of yamlFiles) {
+  private async fixAllFiles(files: vscode.Uri[]): Promise<void> {
+    for (const file of files) {
       const document = await vscode.workspace.openTextDocument(file)
       await this.fixDocument(document)
     }
-
-    vscode.window.showInformationMessage('YAML fixing completed for all files in workspace')
   }
 
-  public dispose(): void {
-    // No diagnostic collection to dispose
+  private showCompletionMessage(): void {
+    vscode.window.showInformationMessage('YAML fixing completed for all files in workspace')
   }
 }
