@@ -7,12 +7,9 @@ export class YamlLinter {
 
   constructor(diagnosticCollection: vscode.DiagnosticCollection) {
     this.diagnosticCollection = diagnosticCollection
-    console.log('this.diagnosticCollection: ', this.diagnosticCollection)
   }
 
   public async lintDocument(document: vscode.TextDocument): Promise<void> {
-    console.log('languageId:', document.languageId)
-
     if (document.isUntitled) {
       return
     }
@@ -56,7 +53,6 @@ export class YamlLinter {
   }
 
   private processLintOutput(document: vscode.TextDocument, output: string): void {
-    console.log('Processing lint output:', output)
     const diagnostics: vscode.Diagnostic[] = []
     const lines = output.split('\n')
     const regex = /^(.*?):(\d+):(\d+): \[(error|warning|info)\] (.*)$/
@@ -107,30 +103,7 @@ export class YamlLinter {
       diagnostics.push(diagnostic)
     }
 
-    console.log('diagnostics length: ', diagnostics.length)
     this.diagnosticCollection.set(document.uri, diagnostics)
-    console.log(`Diagnostics set for ${document.uri.fsPath}`, diagnostics)
-
-    if (diagnostics.length > 0) {
-      const errorCount = diagnostics.filter(
-        (d) => d.severity === vscode.DiagnosticSeverity.Error
-      ).length
-      const warningCount = diagnostics.filter(
-        (d) => d.severity === vscode.DiagnosticSeverity.Warning
-      ).length
-
-      let message = ''
-      if (errorCount > 0) {
-        message += `${errorCount} error${errorCount > 1 ? 's' : ''}`
-      }
-      if (warningCount > 0) {
-        if (message) message += ' and '
-        message += `${warningCount} warning${warningCount > 1 ? 's' : ''}`
-      }
-      message += ' found. Check the Problems panel for details.'
-
-      vscode.window.showInformationMessage(message)
-    }
   }
 
   public dispose(): void {

@@ -7,8 +7,7 @@ export function activate(context: vscode.ExtensionContext) {
   const linter = new YamlLinter(diagnosticCollection)
   const fixer = new YamlFixer()
 
-  const fixCommand = vscode.commands.registerCommand('vsce-yamllint-fix.fixFile', async () => {
-    console.log('Fix command triggered')
+  const fixCommand = vscode.commands.registerCommand('yamlLintFix.fixFile', async () => {
     const editor = vscode.window.activeTextEditor
     if (editor) {
       const success = await fixer.fixDocument(editor.document)
@@ -20,9 +19,8 @@ export function activate(context: vscode.ExtensionContext) {
   })
 
   const fixWorkspaceCommand = vscode.commands.registerCommand(
-    'vsce-yamllint-fix.fixWorkspace',
+    'yamlLintFix.fixWorkspace',
     async () => {
-      console.log('Fix workspace command triggered')
       await fixer.fixWorkspace()
     }
   )
@@ -33,7 +31,6 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.workspace.onDidSaveTextDocument(async (document) => {
       const config = vscode.workspace.getConfiguration('yamlLintFix')
       if (config.get('autoFixOnSave')) {
-        console.log('Auto-fix enabled, fixing document')
         const success = await fixer.fixDocument(document)
         if (success) {
           await document.save()
@@ -61,6 +58,7 @@ export function activate(context: vscode.ExtensionContext) {
       }
     })
   )
+
   // Initial lint of open YAML documents
   for (const editor of vscode.window.visibleTextEditors) {
     if (editor.document.languageId === 'yaml') {
