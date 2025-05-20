@@ -73,14 +73,13 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "lint": "eslint src --ext ts"
+    "lint": "biome check src",
+    "format": "biome format src --write"
   },
   "devDependencies": {
     "@types/vscode": "^1.85.0",
     "@types/node": "^20.11.0",
-    "@typescript-eslint/eslint-plugin": "^6.19.0",
-    "@typescript-eslint/parser": "^6.19.0",
-    "eslint": "^8.56.0",
+    "@biomejs/biome": "1.5.3",
     "typescript": "^5.3.3"
   },
   "dependencies": {
