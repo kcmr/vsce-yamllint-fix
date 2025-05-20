@@ -1,6 +1,6 @@
 {
-  "name": "vsce-yamllint-fix",
-  "displayName": "YAML Lint & Fix",
+  "name": "yamllint-fix",
+  "displayName": "YamlLint Fix",
   "description": "VS Code extension for YAML linting and fixing using yamllint and yamlfix",
   "version": "0.1.0",
   "engines": {
@@ -34,17 +34,17 @@
     "commands": [
       {
         "command": "yamlLintFix.fixFile",
-        "title": "YAML: Fix file",
-        "category": "YAML"
+        "title": "YamlLint: Fix file",
+        "category": "YamlLint"
       },
       {
         "command": "yamlLintFix.fixWorkspace",
-        "title": "YAML: Fix all files in workspace",
-        "category": "YAML"
+        "title": "YamlLint: Fix all files in workspace",
+        "category": "YamlLint"
       }
     ],
     "configuration": {
-      "title": "YAML Lint & Fix",
+      "title": "YamlLint Fix",
       "properties": {
         "yamlLintFix.yamllintPath": {
           "type": "string",

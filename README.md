@@ -1,4 +1,4 @@
-# YAML Lint & Fix
+# YamlLint Fix
 
 A VS Code extension that integrates `yamllint` for linting and `yamlfix` for fixing YAML files.
 

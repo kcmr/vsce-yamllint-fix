@@ -66,9 +66,9 @@ export function activate(context: vscode.ExtensionContext) {
     }
   }
 
-  vscode.window.setStatusBarMessage('YAML Lint & Fix extension activated', 3000)
+  vscode.window.setStatusBarMessage('YamlLint Fix extension activated', 3000)
 }
 
 export function deactivate() {
-  console.log('YAML Lint & Fix extension is now deactivated')
+  console.log('YamlLint Fix extension is now deactivated')
 }

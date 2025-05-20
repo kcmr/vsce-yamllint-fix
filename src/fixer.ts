@@ -69,7 +69,7 @@ export class YamlFixer {
   }
 
   private showError(document: vscode.TextDocument, errorMessage: string): void {
-    vscode.window.showErrorMessage(`YAML fixing failed: ${errorMessage}`)
+    vscode.window.showErrorMessage(`YamlLint fixing failed: ${errorMessage}`)
   }
 
   public async fixWorkspace(): Promise<void> {
@@ -95,6 +95,6 @@ export class YamlFixer {
   }
 
   private showCompletionMessage(): void {
-    vscode.window.showInformationMessage('YAML fixing completed for all files in workspace')
+    vscode.window.showInformationMessage('YamlLint fixing completed for all files in workspace')
   }
 }
