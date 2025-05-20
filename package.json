@@ -24,7 +24,7 @@
     "onLanguage:yaml",
     "onLanguage:yml"
   ],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "icon": "images/icon.png",
   "galleryBanner": {
     "color": "#002b36",
@@ -75,7 +75,7 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./dist/test/runTest.js"
   },
   "devDependencies": {
     "@types/vscode": "^1.85.0",
