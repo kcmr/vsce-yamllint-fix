@@ -1,0 +1,91 @@
+{
+  "name": "vsce-yamllint-fix",
+  "displayName": "YAML Lint & Fix",
+  "description": "VS Code extension for YAML linting and fixing using yamllint and yamlfix",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "keywords": [
+    "yaml",
+    "yamlfix",
+    "fix",
+    "formatter",
+    "yamllint",
+    "fix yaml",
+    "yaml fix"
+  ],
+  "categories": [
+    "Linters",
+    "Formatters"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onLanguage:yaml",
+    "onLanguage:yml"
+  ],
+  "main": "./out/extension.js",
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#002b36",
+    "theme": "dark"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "vsce-yamllint-fix.fixFile",
+        "title": "YAML: Fix file",
+        "category": "YAML"
+      },
+      {
+        "command": "vsce-yamllint-fix.fixWorkspace",
+        "title": "YAML: Fix all files in workspace",
+        "category": "YAML"
+      }
+    ],
+    "configuration": {
+      "title": "YAML Lint & Fix",
+      "properties": {
+        "vsceYamllintFix.yamllintPath": {
+          "type": "string",
+          "default": "yamllint",
+          "description": "Path to yamllint executable"
+        },
+        "vsceYamllintFix.yamlfixPath": {
+          "type": "string",
+          "default": "yamlfix",
+          "description": "Path to yamlfix executable"
+        },
+        "vsceYamllintFix.autoFixOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically fix YAML files on save"
+        },
+        "vsceYamllintFix.configFile": {
+          "type": "string",
+          "default": ".yamllint",
+          "description": "Path to yamllint configuration file"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "execa": "^8.0.1"
+  }
+} 

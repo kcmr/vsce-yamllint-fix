@@ -1,0 +1,23 @@
+extends: default
+
+rules:
+  # Disable line length warnings for testing
+  line-length:
+    max: 100
+    level: error
+  
+  # Configure truthy values
+  truthy:
+    allowed-values: ['true', 'false']
+  
+  # Configure indentation
+  indentation:
+    spaces: 2
+    indent-sequences: true
+    check-multi-line-strings: false
+  
+  # Configure document start
+  document-start: disable
+  
+  # Configure trailing spaces
+  trailing-spaces: enable 

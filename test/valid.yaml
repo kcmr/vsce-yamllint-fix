@@ -1,0 +1,19 @@
+---
+# This is a valid YAML file
+version: 1.0
+name: Test Project
+description: A sample YAML file for testing
+# List of features
+features:
+  - name: Feature 1
+    enabled: true
+    priority: high
+  - name: Feature 2
+    enabled: false
+    priority: medium
+# Configuration settings
+settings:
+  debug: false
+  timeout: 30
+  retries: 3
+  allowed_hosts: [localhost, example.com, test.com]

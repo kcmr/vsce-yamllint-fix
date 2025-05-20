@@ -1,0 +1,22 @@
+---
+# This is an invalid YAML file with common issues
+version: 1.0
+name: Test Project
+description: A sample YAML file with intentional errors
+# List of features with inconsistent indentation
+features:
+  - name: Feature 1
+    enabled: false
+    priority: high
+  - name: Feature 2
+    enabled: false
+    priority: medium
+# Configuration with mixed quotes and inconsistent spacing
+settings:
+  debug: false
+  timeout: '30'
+  retries: 3
+  allowed_hosts: [localhost, example.com, test.com]
+# Line too long that should trigger a warning
+long_line: This is a very long line that exceeds the default line length limit in
+  yamllint and should trigger a warning when linting is performed on this file
