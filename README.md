@@ -32,10 +32,10 @@ A VS Code extension that integrates `yamllint` for linting and `yamlfix` for fix
 
 The extension can be configured through VS Code settings:
 
-- `vsceYamllintFix.yamllintPath`: Path to yamllint executable (default: "yamllint")
-- `vsceYamllintFix.yamlfixPath`: Path to yamlfix executable (default: "yamlfix")
-- `vsceYamllintFix.autoFixOnSave`: Automatically fix YAML files on save (default: false; can be enabled in settings)
-- `vsceYamllintFix.configFile`: Path to yamllint configuration file (default: ".yamllint")
+- `yamlLintFix.yamllintPath`: Path to yamllint executable (default: "yamllint")
+- `yamlLintFix.yamlfixPath`: Path to yamlfix executable (default: "yamlfix")
+- `yamlLintFix.autoFixOnSave`: Automatically fix YAML files on save (default: false; can be enabled in settings)
+- `yamlLintFix.configFile`: Path to yamllint configuration file (default: ".yamllint")
 
 ## Usage
 

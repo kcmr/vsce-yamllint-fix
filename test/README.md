@@ -34,7 +34,7 @@ A custom configuration file for yamllint that:
    - Save the file to trigger automatic linting and see errors appear automatically in the Problems panel and inline in the editor.
    - Use the command palette to run "YAML: Fix file"
    - Use the command palette to run "YAML: Fix all files in workspace"
-   - Optionally, enable the "fix on save" feature by setting `vsceYamllintFix.autoFixOnSave` to `true` in your VS Code settings.
+   - Optionally, enable the "fix on save" feature by setting `yamlLintFix.autoFixOnSave` to `true` in your VS Code settings.
 
 ## Expected Results
 

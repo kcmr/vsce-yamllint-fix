@@ -33,12 +33,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "vsce-yamllint-fix.fixFile",
+        "command": "yamlLintFix.fixFile",
         "title": "YAML: Fix file",
         "category": "YAML"
       },
       {
-        "command": "vsce-yamllint-fix.fixWorkspace",
+        "command": "yamlLintFix.fixWorkspace",
         "title": "YAML: Fix all files in workspace",
         "category": "YAML"
       }
@@ -46,22 +46,22 @@
     "configuration": {
       "title": "YAML Lint & Fix",
       "properties": {
-        "vsceYamllintFix.yamllintPath": {
+        "yamlLintFix.yamllintPath": {
           "type": "string",
           "default": "yamllint",
           "description": "Path to yamllint executable"
         },
-        "vsceYamllintFix.yamlfixPath": {
+        "yamlLintFix.yamlfixPath": {
           "type": "string",
           "default": "yamlfix",
           "description": "Path to yamlfix executable"
         },
-        "vsceYamllintFix.autoFixOnSave": {
+        "yamlLintFix.autoFixOnSave": {
           "type": "boolean",
           "default": false,
           "description": "Automatically fix YAML files on save"
         },
-        "vsceYamllintFix.configFile": {
+        "yamlLintFix.configFile": {
           "type": "string",
           "default": ".yamllint",
           "description": "Path to yamllint configuration file"

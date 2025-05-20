@@ -10,7 +10,7 @@ export interface YamlLintFixConfig {
 }
 
 export function getConfig(): YamlLintFixConfig {
-  const config = vscode.workspace.getConfiguration('vsceYamllintFix')
+  const config = vscode.workspace.getConfiguration('yamlLintFix')
   return {
     yamllintPath: config.get('yamllintPath') || 'yamllint',
     yamlfixPath: config.get('yamlfixPath') || 'yamlfix',

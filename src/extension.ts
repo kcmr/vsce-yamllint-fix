@@ -31,7 +31,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.workspace.onDidSaveTextDocument(async (document) => {
-      const config = vscode.workspace.getConfiguration('vsceYamllintFix')
+      const config = vscode.workspace.getConfiguration('yamlLintFix')
       if (config.get('autoFixOnSave')) {
         console.log('Auto-fix enabled, fixing document')
         const success = await fixer.fixDocument(document)
@@ -52,7 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration(async (e) => {
-      if (e.affectsConfiguration('vsceYamllintFix')) {
+      if (e.affectsConfiguration('yamlLintFix')) {
         for (const editor of vscode.window.visibleTextEditors) {
           if (editor.document.languageId === 'yaml') {
             linter.lintDocument(editor.document)
