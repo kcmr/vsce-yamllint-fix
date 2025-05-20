@@ -147,12 +147,29 @@ export class YamlLinter {
 
     const diagnostic = new vscode.Diagnostic(range, result.message, severity)
     diagnostic.source = 'yamllint'
+
+    const { rule, urlPath } = this.extractRuleName(result.message)
+
     diagnostic.code = {
-      value: result.message.split(' ')[0],
-      target: vscode.Uri.parse('https://yamllint.readthedocs.io/en/stable/rules.html'),
+      value: rule || result.message,
+      target: urlPath
+        ? vscode.Uri.parse(
+            `https://yamllint.readthedocs.io/en/stable/rules.html#module-yamllint.rules.${urlPath}`
+          )
+        : vscode.Uri.parse('https://yamllint.readthedocs.io/en/stable/rules.html'),
     }
 
     return diagnostic
+  }
+
+  private extractRuleName(message: string): { rule: string; urlPath: string } {
+    const match = message.match(/\(([^)]+)\)$/)
+    if (match) {
+      const rule = match[1]
+      const urlPath = rule.toLowerCase().replace(/-/g, '_')
+      return { rule, urlPath }
+    }
+    return { rule: '', urlPath: '' }
   }
 
   private getDiagnosticSeverity(level: 'error' | 'warning' | 'info'): vscode.DiagnosticSeverity {
