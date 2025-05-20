@@ -2,18 +2,28 @@ import * as path from 'path'
 import * as vscode from 'vscode'
 import { findConfigFile, getConfig } from './config'
 
+interface LintResult {
+  file: string
+  line: number
+  column: number
+  level: 'error' | 'warning' | 'info'
+  message: string
+}
+
 export class YamlLinter {
   private diagnosticCollection: vscode.DiagnosticCollection
+  private readonly severityMap = new Map([
+    ['error', vscode.DiagnosticSeverity.Error],
+    ['warning', vscode.DiagnosticSeverity.Warning],
+    ['info', vscode.DiagnosticSeverity.Information],
+  ])
 
   constructor(diagnosticCollection: vscode.DiagnosticCollection) {
     this.diagnosticCollection = diagnosticCollection
   }
 
   public async lintDocument(document: vscode.TextDocument): Promise<void> {
-    if (document.isUntitled) {
-      return
-    }
-    if (document.languageId !== 'yaml' && document.languageId !== 'yml') {
+    if (!this.shouldLintDocument(document)) {
       return
     }
 
@@ -22,37 +32,64 @@ export class YamlLinter {
       return
     }
 
+    try {
+      const output = await this.runYamllint(document, workspaceFolder)
+      this.processLintOutput(document, output)
+    } catch (error: unknown) {
+      this.handleLintError(error, document)
+    }
+  }
+
+  private shouldLintDocument(document: vscode.TextDocument): boolean {
+    const isUnSaved = document.isUntitled
+    const isYaml = document.languageId === 'yaml' || document.languageId === 'yml'
+
+    return !isUnSaved && isYaml
+  }
+
+  private async runYamllint(
+    document: vscode.TextDocument,
+    workspaceFolder: vscode.WorkspaceFolder
+  ): Promise<string> {
     const config = getConfig()
     const configFile = await findConfigFile(workspaceFolder)
+    const { execa } = await import('execa')
 
-    try {
-      const { execa } = await import('execa')
-      const args = ['--format', 'parsable']
-      if (configFile) {
-        args.push('-c', configFile)
-      }
-      args.push(document.uri.fsPath)
+    const args = ['--format', 'parsable']
+    if (configFile) {
+      args.push('-c', configFile)
+    }
+    args.push(document.uri.fsPath)
 
-      const { stdout } = await execa(config.yamllintPath, args)
-      this.processLintOutput(document, stdout)
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        let errorMessage = 'YAML linting failed. Check the Problems panel for details.'
-        if ('stderr' in error && error.stderr) {
-          errorMessage += `\n${error.stderr}`
-        }
-        if (error.message.includes('yamllint')) {
-          const output = error.message.split('\n').slice(1).join('\n')
-          this.processLintOutput(document, output)
-        } else {
-          vscode.window.showErrorMessage(errorMessage)
-          this.diagnosticCollection.delete(document.uri)
-        }
-      }
+    const { stdout } = await execa(config.yamllintPath, args)
+    return stdout
+  }
+
+  private handleLintError(error: unknown, document: vscode.TextDocument): void {
+    if (!(error instanceof Error)) {
+      return
+    }
+
+    let errorMessage = 'YAML linting failed. Check the Problems panel for details.'
+    if ('stderr' in error && error.stderr) {
+      errorMessage += `\n${error.stderr}`
+    }
+
+    if (error.message.includes('yamllint')) {
+      const output = error.message.split('\n').slice(1).join('\n')
+      this.processLintOutput(document, output)
+    } else {
+      vscode.window.showErrorMessage(errorMessage)
+      this.diagnosticCollection.delete(document.uri)
     }
   }
 
   private processLintOutput(document: vscode.TextDocument, output: string): void {
+    const diagnostics = this.parseLintOutput(document, output)
+    this.diagnosticCollection.set(document.uri, diagnostics)
+  }
+
+  private parseLintOutput(document: vscode.TextDocument, output: string): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = []
     const lines = output.split('\n')
     const regex = /^(.*?):(\d+):(\d+): \[(error|warning|info)\] (.*)$/
@@ -60,50 +97,66 @@ export class YamlLinter {
     for (const line of lines) {
       if (!line.trim()) continue
 
-      const match = regex.exec(line)
-      if (!match) {
-        console.error(`Failed to parse yamllint output line: ${line}`)
-        continue
+      const result = this.parseLintLine(line, regex, document)
+      if (result) {
+        diagnostics.push(this.createDiagnostic(result))
       }
-
-      const [_, file, lineNum, col, level, message] = match
-
-      // Normalize both paths before comparison
-      if (path.resolve(file) !== path.resolve(document.uri.fsPath)) {
-        continue
-      }
-
-      const lineIndex = parseInt(lineNum, 10) - 1
-      const colIndex = parseInt(col, 10) - 1
-
-      if (Number.isNaN(lineIndex) || Number.isNaN(colIndex)) {
-        console.error(`Invalid line or column number in yamllint output line: ${line}`)
-        continue
-      }
-
-      const range = new vscode.Range(lineIndex, colIndex, lineIndex, colIndex + 1)
-
-      let severity: vscode.DiagnosticSeverity
-      if (level === 'error') {
-        severity = vscode.DiagnosticSeverity.Error
-      } else if (level === 'warning') {
-        severity = vscode.DiagnosticSeverity.Warning
-      } else if (level === 'info') {
-        severity = vscode.DiagnosticSeverity.Information
-      } else {
-        severity = vscode.DiagnosticSeverity.Warning
-      }
-
-      const diagnostic = new vscode.Diagnostic(range, message, severity)
-      diagnostic.source = 'yamllint'
-      diagnostic.code = {
-        value: message.split(' ')[0],
-        target: vscode.Uri.parse('https://yamllint.readthedocs.io/en/stable/rules.html'),
-      }
-      diagnostics.push(diagnostic)
     }
 
-    this.diagnosticCollection.set(document.uri, diagnostics)
+    return diagnostics
+  }
+
+  private parseLintLine(
+    line: string,
+    regex: RegExp,
+    document: vscode.TextDocument
+  ): LintResult | null {
+    const match = regex.exec(line)
+    if (!match) {
+      console.error(`Failed to parse yamllint output line: ${line}`)
+      return null
+    }
+
+    const [_, file, lineNum, col, level, message] = match
+
+    // Normalize both paths before comparison
+    if (path.resolve(file) !== path.resolve(document.uri.fsPath)) {
+      return null
+    }
+
+    const lineIndex = parseInt(lineNum, 10) - 1
+    const colIndex = parseInt(col, 10) - 1
+
+    if (Number.isNaN(lineIndex) || Number.isNaN(colIndex)) {
+      console.error(`Invalid line or column number in yamllint output line: ${line}`)
+      return null
+    }
+
+    return {
+      file,
+      line: lineIndex,
+      column: colIndex,
+      level: level as 'error' | 'warning' | 'info',
+      message,
+    }
+  }
+
+  private createDiagnostic(result: LintResult): vscode.Diagnostic {
+    const range = new vscode.Range(result.line, result.column, result.line, result.column + 1)
+    const severity = this.getDiagnosticSeverity(result.level)
+
+    const diagnostic = new vscode.Diagnostic(range, result.message, severity)
+    diagnostic.source = 'yamllint'
+    diagnostic.code = {
+      value: result.message.split(' ')[0],
+      target: vscode.Uri.parse('https://yamllint.readthedocs.io/en/stable/rules.html'),
+    }
+
+    return diagnostic
+  }
+
+  private getDiagnosticSeverity(level: 'error' | 'warning' | 'info'): vscode.DiagnosticSeverity {
+    return this.severityMap.get(level) ?? vscode.DiagnosticSeverity.Warning
   }
 
   public dispose(): void {
