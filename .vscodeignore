@@ -1,0 +1,14 @@
+# source
+src/
+
+# development
+test/
+node_modules
+
+# config folders
+.vscode/
+
+# config files
+.gitignore
+biome.json
+tsconfig.json
