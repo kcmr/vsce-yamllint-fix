@@ -7,8 +7,14 @@ node_modules
 
 # config folders
 .vscode/
+.github/
+.husky/
 
 # config files
 .gitignore
+.releaserc
+.nvmrc
+lefthook.yml
+specs.md
 biome.json
 tsconfig.json
