@@ -34,9 +34,13 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@types/node": "^20.11.0",
     "@types/vscode": "^1.85.0",
     "lefthook": "^1.11.13",
+    "semantic-release": "^24.2.4",
+    "semantic-release-vsce": "^6.0.8",
     "typescript": "^5.3.3"
   },
   "engines": {
