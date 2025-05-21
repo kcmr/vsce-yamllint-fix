@@ -1,12 +1,17 @@
 {
   "name": "yamllint-fix",
-  "displayName": "YamlLint Fix",
-  "description": "VS Code extension for YAML linting and fixing using yamllint and yamlfix",
-  "version": "0.1.0",
-  "engines": {
-    "vscode": "^1.85.0",
-    "node": ">=20"
+  "version": "0.0.0-development",
+  "description": "Extension for YAML linting and fixing using yamllint and yamlfix",
+  "author": "Kus Cámara",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kcmr/vsce-yamllint-fix.git"
   },
+  "bugs": {
+    "url": "https://github.com/kcmr/vsce-yamllint-fix/issues"
+  },
+  "homepage": "https://github.com/kcmr/vsce-yamllint-fix#readme",
   "keywords": [
     "yaml",
     "yamlfix",
@@ -16,6 +21,38 @@
     "fix yaml",
     "yaml fix"
   ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "biome check src",
+    "format": "biome format src --write"
+  },
+  "dependencies": {
+    "execa": "^8.0.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.5.3",
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "lefthook": "^1.11.13",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "vscode": "^1.85.0",
+    "node": ">=20"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "displayName": "YamlLint Fix",
+  "publisher": "kuscamara",
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#002b36",
+    "theme": "dark"
+  },
   "categories": [
     "Linters",
     "Formatters"
@@ -25,15 +62,6 @@
     "onLanguage:yaml",
     "onLanguage:yml"
   ],
-  "main": "./dist/extension.js",
-  "icon": "images/icon.png",
-  "license": "MIT",
-  "author": "Kus Cámara",
-  "publisher": "kuscamara",
-  "galleryBanner": {
-    "color": "#002b36",
-    "theme": "dark"
-  },
   "contributes": {
     "commands": [
       {
@@ -72,22 +100,5 @@
         }
       }
     }
-  },
-  "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "lint": "biome check src",
-    "format": "biome format src --write"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.5.3",
-    "@types/node": "^20.11.0",
-    "@types/vscode": "^1.85.0",
-    "lefthook": "^1.11.13",
-    "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "execa": "^8.0.1"
   }
 }
