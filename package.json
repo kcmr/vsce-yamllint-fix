@@ -34,12 +34,12 @@
     "commands": [
       {
         "command": "yamlLintFix.fixFile",
-        "title": "YamlLint: Fix file",
+        "title": "Fix file",
         "category": "YamlLint"
       },
       {
         "command": "yamlLintFix.fixWorkspace",
-        "title": "YamlLint: Fix all files in workspace",
+        "title": "Fix all files in workspace",
         "category": "YamlLint"
       }
     ],
