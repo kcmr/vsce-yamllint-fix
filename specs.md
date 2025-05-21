@@ -1,71 +1,66 @@
-# 🧩 Briefing: Extensión VS Code para lint y fix de YAML
+# 🧩 YamlLint Fix Extension - Project Specs
 
-## 🎯 Objetivo
+## 🎯 Objective
 
-Crear una extensión para VS Code que integre `yamllint` para análisis de lint y `yamlfix` para aplicar correcciones automáticas o bajo demanda en archivos `.yaml`/`.yml`.
+Create a VS Code extension that integrates `yamllint` for linting and `yamlfix` for automatic or on-demand fixing of `.yaml`/`.yml` files and any file recognized as YAML by VS Code.
 
-## 🧰 Herramientas clave
+## 🧰 Key Tools
 
-- [`yamllint`](https://yamllint.readthedocs.io/en/stable/): herramienta de análisis estático para archivos YAML.
-- [`yamlfix`](https://github.com/lyz-code/yamlfix): formateador automático para archivos YAML.
-- VS Code API (`vscode`): integración con el editor para activar comandos, registrar diagnósticos, y más.
-- Opcional: [`execa`](https://github.com/sindresorhus/execa) para ejecución segura de procesos externos.
+- [`yamllint`](https://yamllint.readthedocs.io/en/stable/): Static analysis tool for YAML files.
+- [`yamlfix`](https://github.com/lyz-code/yamlfix): Automatic formatter for YAML files.
+- [`execa`](https://github.com/sindresorhus/execa): For safe execution of external processes (imported dynamically for compatibility).
+- VS Code API (`vscode`): For integration with the editor, command registration, diagnostics, etc.
+- TypeScript.
 
-## ⚙️ Comportamiento esperado
+## ⚙️ Current Behavior
 
-### Configuración
-- La extensión detectará automáticamente un archivo `.yamllint` en la raíz del proyecto para usarlo como configuración.
-- Alternativamente, se podrá definir una configuración global o por workspace desde los `settings.json` de VS Code.
-- También se podrá configurar la ruta a los ejecutables (`yamllint`, `yamlfix`) en caso de instalaciones personalizadas.
+### Configuration
+- The extension automatically detects a `.yamllint` file in the project root for configuration.
+- Alternatively, configuration can be set globally or per workspace via VS Code settings.
+- Paths to the executables (`yamllint`, `yamlfix`) are configurable.
 
 ### Linting
-- Al guardar un archivo YAML, o manualmente mediante un comando, se ejecutará `yamllint`.
-- Los errores y advertencias aparecerán en el panel de *Problemas* de VS Code mediante `diagnostics`.
+- On save or via command, `yamllint` is run on the file.
+- Errors and warnings are shown in the Problems panel and inline using VS Code diagnostics.
+- Diagnostic links point directly to the relevant rule documentation.
 
-### Fix
-- Si el usuario lo desea, se podrá ejecutar `yamlfix`:
-  - Automáticamente al guardar (si está habilitado).
-  - Mediante un comando manual (`YAML: Fix file`).
-- El contenido del editor se actualizará si hay modificaciones tras el fix.
-- Notificaciones informarán del resultado del proceso.
+### Fixing
+- `yamlfix` can be run:
+  - Automatically on save (if enabled in settings).
+  - Manually via the command palette ("Fix file", "Fix all files in workspace").
+- The extension updates the editor content if modifications are made.
+- Notifications inform the user of the result.
 
-## 📁 Estructura propuesta
+### Workspace Fix Logic
+- The command "Fix all files in workspace" now:
+  - Fixes all files with `.yaml` or `.yml` extension.
+  - Also includes any open file in the editor whose `languageId` is `yaml` (even if it has no extension, e.g., `.yamllint`).
 
+## 📁 Project Structure
+
+```
 vsce-yamllint-fix/
 ├── src/
-│ ├── extension.ts # Entrada principal
-│ ├── linter.ts # Ejecuta yamllint
-│ ├── fixer.ts # Ejecuta yamlfix
-│ ├── config.ts # Carga y gestiona la configuración
+│   ├── extension.ts      # Main entry point
+│   ├── linter.ts         # Runs yamllint
+│   ├── fixer.ts          # Runs yamlfix
+│   ├── config.ts         # Loads and manages configuration
 │
-├── package.json # Configuración de la extensión
+├── test/                 # Test files and manual test instructions
+├── package.json          # Extension configuration
 ├── tsconfig.json
-└── README.md
+├── README.md
+└── specs.md
+```
 
+## 🧪 Commands
 
-## 🧪 Comandos esperados
+- `Fix file` — Fixes the current YAML file
+- `Fix all files in workspace` — Fixes all YAML files in the workspace (including open files detected as YAML)
 
-- `YAML: Lint file`
-- `YAML: Fix file`
-- `YAML: Fix all files in workspace`
+## 🛠️ Implementation Notes
 
-## 🛠️ Inspiración y referencias
+- All imports use standard TypeScript/Node.js syntax. `execa` is imported dynamically for compatibility with both CommonJS and ESM environments.
+- Diagnostic links to yamllint rules are precise, even for rules with hyphens in their names.
+- The extension is robust to errors and provides clear user feedback.
 
-Esta extensión puede usar como referencia mi extensión anterior:
-➡️ [`vsce-remove-unused-imports`](https://github.com/kcmr/vsce-remove-unused-imports)
-
-Allí usé una aproximación directa basada en manipular el contenido del editor sin parseo avanzado. En este caso no hace falta usar Babel ni AST, ya que la corrección la realiza `yamlfix`.
-
-## 🚧 Consideraciones
-
-- `yamllint` no aplica fixes, solo reporta. Por eso usamos `yamlfix` como fixer externo.
-- Se debe verificar si las herramientas están disponibles (en `$PATH`) y mostrar instrucciones si no lo están.
-- Es deseable que la extensión sea robusta ante errores del sistema o fallos en el análisis.
-
----
-
-## ✅ Posibles mejoras futuras
-
-- Soporte para `yamlfixer` como alternativa.
-- Aplicar fixes selectivos desde el panel de problemas.
-- Soporte multi-root y ejecución masiva en proyectos monorepo.
