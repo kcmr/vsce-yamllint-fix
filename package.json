@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kcmr/vsce-yamllint-fix.git"
+    "url": "https://github.com/kcmr/vsce-yamllint-fix"
   },
   "bugs": {
     "url": "https://github.com/kcmr/vsce-yamllint-fix/issues"
