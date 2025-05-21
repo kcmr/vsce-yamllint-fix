@@ -80,12 +80,12 @@
     "format": "biome format src --write"
   },
   "devDependencies": {
-    "@types/vscode": "^1.85.0",
-    "@types/node": "^20.11.0",
     "@biomejs/biome": "1.5.3",
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
     "typescript": "^5.3.3"
   },
   "dependencies": {
     "execa": "^8.0.1"
   }
-} 
+}
