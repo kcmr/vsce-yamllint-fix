@@ -62,7 +62,7 @@ rules:
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines before submitting a pull request.
 
 ## License
 

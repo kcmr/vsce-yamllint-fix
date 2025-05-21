@@ -4,7 +4,8 @@
   "description": "VS Code extension for YAML linting and fixing using yamllint and yamlfix",
   "version": "0.1.0",
   "engines": {
-    "vscode": "^1.85.0"
+    "vscode": "^1.85.0",
+    "node": ">=20"
   },
   "keywords": [
     "yaml",
