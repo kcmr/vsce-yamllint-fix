@@ -84,7 +84,19 @@ export class YamlFixer {
       return []
     }
 
-    return vscode.workspace.findFiles('**/*.{yaml,yml}')
+    const yamlFiles = await vscode.workspace.findFiles('**/*.{yaml,yml}')
+    const yamlFilePaths = new Set(yamlFiles.map((uri) => uri.fsPath))
+
+    // Add open files in the editor with languageId 'yaml' that are not already in the list
+    for (const editor of vscode.window.visibleTextEditors) {
+      const doc = editor.document
+      if (doc.languageId === 'yaml' && !yamlFilePaths.has(doc.uri.fsPath)) {
+        yamlFiles.push(doc.uri)
+        yamlFilePaths.add(doc.uri.fsPath)
+      }
+    }
+
+    return yamlFiles
   }
 
   private async fixAllFiles(files: vscode.Uri[]): Promise<void> {
