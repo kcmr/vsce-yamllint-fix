@@ -41,12 +41,15 @@ The extension can be configured through VS Code settings:
 
 ### Commands
 
-- `YAML: Fix file` - Fix the current YAML file
-- `YAML: Fix all files in workspace` - Fix all YAML files in the workspace
+- `YamlLintFix: Fix file` - Fix the current YAML file
+- `YamlLintFix: Fix all files in workspace` - Fix all YAML files in the workspace
 
 ### Configuration File
 
-Place a `.yamllint` file in your project root to configure yamllint rules. Example:
+Place a `.yamllint` file in your project root to configure yamllint rules. 
+A file with a different name can be specified in the extension settings.
+
+Example:
 
 ```yaml
 extends: default
@@ -63,4 +66,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the [MIT License](LICENSE).

@@ -26,6 +26,9 @@
   ],
   "main": "./dist/extension.js",
   "icon": "images/icon.png",
+  "license": "MIT",
+  "author": "Kus Cámara",
+  "publisher": "kuscamara",
   "galleryBanner": {
     "color": "#002b36",
     "theme": "dark"
