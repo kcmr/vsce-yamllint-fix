@@ -1,3 +1,4 @@
+import { execa } from 'execa'
 import * as vscode from 'vscode'
 import { findConfigFile, getConfig } from './config'
 
@@ -38,7 +39,6 @@ export class YamlFixer {
   ): Promise<FixResult> {
     const config = getConfig()
     const configFile = await findConfigFile(workspaceFolder)
-    const { execa } = await import('execa')
 
     const args = []
     if (configFile) {
