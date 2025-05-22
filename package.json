@@ -68,7 +68,8 @@
   "activationEvents": [
     "onStartupFinished",
     "onLanguage:yaml",
-    "onLanguage:yml"
+    "onLanguage:yml",
+    "onLanguage:github-actions-workflow"
   ],
   "contributes": {
     "commands": [
