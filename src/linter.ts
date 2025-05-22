@@ -2,6 +2,7 @@ import * as path from 'path'
 import { execa } from 'execa'
 import * as vscode from 'vscode'
 import { findConfigFile, getConfig } from './config'
+import { isValidLanguage } from './languages'
 
 interface LintResult {
   file: string
@@ -43,7 +44,7 @@ export class YamlLinter {
 
   private shouldLintDocument(document: vscode.TextDocument): boolean {
     const isUnSaved = document.isUntitled
-    const isYaml = document.languageId === 'yaml' || document.languageId === 'yml'
+    const isYaml = isValidLanguage(document.languageId)
 
     return !isUnSaved && isYaml
   }
