@@ -1,4 +1,5 @@
 import * as vscode from 'vscode'
+import { getConfig } from './config'
 import { YamlFixer } from './fixer'
 import { YamlLinter } from './linter'
 
@@ -29,8 +30,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.workspace.onDidSaveTextDocument(async (document) => {
-      const config = vscode.workspace.getConfiguration('yamlLintFix')
-      if (config.get('autoFixOnSave')) {
+      const config = getConfig()
+      if (config.autoFixOnSave) {
         const success = await fixer.fixDocument(document)
         if (success) {
           await document.save()
