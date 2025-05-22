@@ -1,6 +1,7 @@
 import { execa } from 'execa'
 import * as vscode from 'vscode'
 import { findConfigFile, getConfig } from './config'
+import { isValidLanguage } from './languages'
 
 interface FixResult {
   success: boolean
@@ -28,7 +29,7 @@ export class YamlFixer {
 
   private shouldFixDocument(document: vscode.TextDocument): boolean {
     const isUnSaved = document.isUntitled
-    const isYaml = document.languageId === 'yaml' || document.languageId === 'yml'
+    const isYaml = isValidLanguage(document.languageId)
 
     return !isUnSaved && isYaml
   }
@@ -87,10 +88,10 @@ export class YamlFixer {
     const yamlFiles = await vscode.workspace.findFiles('**/*.{yaml,yml}')
     const yamlFilePaths = new Set(yamlFiles.map((uri) => uri.fsPath))
 
-    // Add open files in the editor with languageId 'yaml' that are not already in the list
+    // Add open files in the editor with supported languageIds that are not already in the list
     for (const editor of vscode.window.visibleTextEditors) {
       const doc = editor.document
-      if (doc.languageId === 'yaml' && !yamlFilePaths.has(doc.uri.fsPath)) {
+      if (isValidLanguage(doc.languageId) && !yamlFilePaths.has(doc.uri.fsPath)) {
         yamlFiles.push(doc.uri)
         yamlFilePaths.add(doc.uri.fsPath)
       }
