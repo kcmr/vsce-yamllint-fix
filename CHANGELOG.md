@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/kcmr/vsce-yamllint-fix/compare/v1.0.2...v1.0.3) (2025-05-22)
+
+
+### Bug Fixes
+
+* execa not included in extension ([d1f0b96](https://github.com/kcmr/vsce-yamllint-fix/commit/d1f0b9653fee13f4cb9a2abb56b71e4291bd506a)), closes [#6](https://github.com/kcmr/vsce-yamllint-fix/issues/6)
+
 ## [1.0.2](https://github.com/kcmr/vsce-yamllint-fix/compare/v1.0.1...v1.0.2) (2025-05-22)
 
 
