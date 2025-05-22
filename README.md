@@ -13,7 +13,7 @@ A VS Code extension that integrates `yamllint` for linting and `yamlfix` for fix
 ## Features
 
 - Automatic linting of YAML files on save, with errors shown automatically in the editor and the Problems panel
-- Manual fixing of YAML files on save (optional, can be enabled in settings)
+- Automatic fixing of YAML files on save (optional, can be enabled in settings)
 - Manual fixing of current file or all files in workspace
 - Support for custom `.yamllint` configuration files
 - Configurable paths for `yamllint` and `yamlfix` executables
