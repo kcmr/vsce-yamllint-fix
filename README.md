@@ -32,8 +32,10 @@ A VS Code extension that integrates `yamllint` for linting and `yamlfix` for fix
 
 2. Install the extension from the VS Code marketplace or build from source:
    ```bash
+   npm i -g @vscode/vsce
    npm install
-   npm run compile
+   vsce package
+   code --install-extension vsce-yamllint-fix-<version>.vsix
    ```
 
 ## Configuration
