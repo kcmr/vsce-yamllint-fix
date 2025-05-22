@@ -23,14 +23,16 @@
   ],
   "main": "./dist/extension.js",
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run build",
+    "prebuild": "rimraf dist",
+    "bundle": "esbuild src/extension.ts --bundle --platform=node --format=cjs --outfile=dist/extension.js --external:vscode",
+    "build": "npm run bundle",
+    "watch": "npm run bundle -- --sourcemap --watch",
     "lint": "biome check src",
     "format": "biome format src --write"
   },
   "dependencies": {
-    "execa": "^8.0.1"
+    "execa": "^7.2.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
@@ -38,7 +40,9 @@
     "@semantic-release/git": "^10.0.1",
     "@types/node": "^20.11.0",
     "@types/vscode": "^1.85.0",
+    "esbuild": "^0.25.4",
     "lefthook": "^1.11.13",
+    "rimraf": "^6.0.1",
     "semantic-release": "^24.2.4",
     "semantic-release-vsce": "^6.0.8",
     "typescript": "^5.3.3"

@@ -1,4 +1,5 @@
 import * as path from 'path'
+import { execa } from 'execa'
 import * as vscode from 'vscode'
 import { findConfigFile, getConfig } from './config'
 
@@ -53,7 +54,6 @@ export class YamlLinter {
   ): Promise<string> {
     const config = getConfig()
     const configFile = await findConfigFile(workspaceFolder)
-    const { execa } = await import('execa')
 
     const args = ['--format', 'parsable']
     if (configFile) {

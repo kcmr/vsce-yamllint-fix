@@ -4,7 +4,7 @@
         {
             "type": "npm",
             "script": "watch",
-            "problemMatcher": "$tsc-watch",
+            "problemMatcher": "$eslint-stylish",
             "isBackground": true,
             "presentation": {
                 "reveal": "never"
@@ -15,4 +15,4 @@
             }
         }
     ]
-} 
+}
