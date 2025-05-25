@@ -53,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.workspace.onDidChangeTextDocument(async (event) => {
       if (isValidLanguage(event.document.languageId)) {
-        if (!(await ensureConfigFile(event.document))) {
+        if (!(await ensureConfigFile(event.document, false))) {
           return
         }
         await linter.lintDocument(event.document)
@@ -75,7 +75,13 @@ export function activate(context: vscode.ExtensionContext) {
     })
   )
 
-  // Initial lint of open YAML documents
+  // Initial lint of open YAML documents to show problems in the panel
+  lintOpenYamlDocuments(linter)
+
+  vscode.window.setStatusBarMessage('YamlLint Fix extension activated', 3000)
+}
+
+function lintOpenYamlDocuments(linter: YamlLinter) {
   for (const editor of vscode.window.visibleTextEditors) {
     if (isValidLanguage(editor.document.languageId)) {
       linter.lintDocument(editor.document).catch((error) => {
@@ -83,8 +89,6 @@ export function activate(context: vscode.ExtensionContext) {
       })
     }
   }
-
-  vscode.window.setStatusBarMessage('YamlLint Fix extension activated', 3000)
 }
 
 export function deactivate() {
