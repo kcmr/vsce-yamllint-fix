@@ -17,8 +17,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - uses: mongolyy/reviewdog-action-biome@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-review
-          fail_on_error: true
+      - name: Run Biome
+        run: npx biome ci .
