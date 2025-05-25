@@ -1,6 +1,6 @@
 import * as fs from 'fs'
-import * as vscode from 'vscode'
 import * as path from 'path'
+import * as vscode from 'vscode'
 
 export interface YamlLintFixConfig {
   yamllintPath: string
@@ -30,4 +30,48 @@ export async function findConfigFile(
   } catch {
     return undefined
   }
+}
+
+export async function ensureConfigFile(
+  document: vscode.TextDocument,
+  showMessage = true
+): Promise<boolean> {
+  const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)
+  if (!workspaceFolder) {
+    return false
+  }
+
+  const configFile = await findConfigFile(workspaceFolder)
+  if (configFile) {
+    return true
+  }
+
+  if (showMessage) {
+    showConfigFileMissingMessage()
+  }
+  return false
+}
+
+export async function ensureConfigFileForWorkspace(): Promise<boolean> {
+  const workspaceFolders = vscode.workspace.workspaceFolders
+  if (!workspaceFolders) {
+    return false
+  }
+
+  for (const folder of workspaceFolders) {
+    const configFile = await findConfigFile(folder)
+    if (!configFile) {
+      showConfigFileMissingMessage()
+      return false
+    }
+  }
+
+  return true
+}
+
+function showConfigFileMissingMessage(): void {
+  const configFile = getConfig().configFile;
+  vscode.window.showInformationMessage(
+    `YAML linting is not available. Please create a ${configFile} configuration file in your workspace root.`
+  );
 }
