@@ -70,7 +70,8 @@ export async function ensureConfigFileForWorkspace(): Promise<boolean> {
 }
 
 function showConfigFileMissingMessage(): void {
+  const configFile = getConfig().configFile;
   vscode.window.showInformationMessage(
-    'YAML linting is not available. Please create a .yamllint configuration file in your workspace root.'
-  )
+    `YAML linting is not available. Please create a ${configFile} configuration file in your workspace root.`
+  );
 }
