@@ -1,3 +1,16 @@
+# [1.1.0](https://github.com/kcmr/vsce-yamllint-fix/compare/v1.0.3...v1.1.0) (2025-05-25)
+
+
+### Bug Fixes
+
+* preserve white lines after fixing ([febeb74](https://github.com/kcmr/vsce-yamllint-fix/commit/febeb74ef8c8cb97ce660e2b9e19bfbc68e0b117))
+* prevent linting if no config file is present ([c26141d](https://github.com/kcmr/vsce-yamllint-fix/commit/c26141da0b383b69e21a488bc1136ffd1f74927f)), closes [#10](https://github.com/kcmr/vsce-yamllint-fix/issues/10)
+
+
+### Features
+
+* add support for 'github-actions-workflow' language ([213deba](https://github.com/kcmr/vsce-yamllint-fix/commit/213deba6e574df3ff69f64a79c18354f2dcf1ae3)), closes [#8](https://github.com/kcmr/vsce-yamllint-fix/issues/8)
+
 ## [1.0.3](https://github.com/kcmr/vsce-yamllint-fix/compare/v1.0.2...v1.0.3) (2025-05-22)
 
 
