@@ -28,8 +28,8 @@
     "bundle": "esbuild src/extension.ts --bundle --platform=node --format=cjs --outfile=dist/extension.js --external:vscode",
     "build": "npm run bundle",
     "watch": "npm run bundle -- --sourcemap --watch",
-    "lint": "biome check src",
-    "format": "biome format src --write"
+    "lint": "biome check .",
+    "format": "biome format . --write"
   },
   "dependencies": {
     "execa": "^7.2.0"
