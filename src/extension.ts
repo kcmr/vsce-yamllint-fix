@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import { getConfig } from './config'
+import { ensureConfigFile, ensureConfigFileForWorkspace, getConfig } from './config'
 import { YamlFixer } from './fixer'
 import { isValidLanguage } from './languages'
 import { YamlLinter } from './linter'
@@ -12,6 +12,9 @@ export function activate(context: vscode.ExtensionContext) {
   const fixCommand = vscode.commands.registerCommand('yamlLintFix.fixFile', async () => {
     const editor = vscode.window.activeTextEditor
     if (editor) {
+      if (!(await ensureConfigFile(editor.document))) {
+        return
+      }
       const success = await fixer.fixDocument(editor.document)
       if (success) {
         await editor.document.save()
@@ -23,6 +26,9 @@ export function activate(context: vscode.ExtensionContext) {
   const fixWorkspaceCommand = vscode.commands.registerCommand(
     'yamlLintFix.fixWorkspace',
     async () => {
+      if (!(await ensureConfigFileForWorkspace())) {
+        return
+      }
       await fixer.fixWorkspace()
     }
   )
@@ -33,6 +39,9 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.workspace.onDidSaveTextDocument(async (document) => {
       const config = getConfig()
       if (config.autoFixOnSave) {
+        if (!(await ensureConfigFile(document))) {
+          return
+        }
         const success = await fixer.fixDocument(document)
         if (success) {
           await document.save()
@@ -44,17 +53,22 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.workspace.onDidChangeTextDocument(async (event) => {
       if (isValidLanguage(event.document.languageId)) {
+        if (!(await ensureConfigFile(event.document))) {
+          return
+        }
         await linter.lintDocument(event.document)
       }
     })
   )
 
   context.subscriptions.push(
-    vscode.workspace.onDidChangeConfiguration(async (e) => {
+    vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration('yamlLintFix')) {
         for (const editor of vscode.window.visibleTextEditors) {
           if (isValidLanguage(editor.document.languageId)) {
-            linter.lintDocument(editor.document)
+            linter.lintDocument(editor.document).catch((error) => {
+              console.error('Error linting document:', error)
+            })
           }
         }
       }
@@ -64,7 +78,9 @@ export function activate(context: vscode.ExtensionContext) {
   // Initial lint of open YAML documents
   for (const editor of vscode.window.visibleTextEditors) {
     if (isValidLanguage(editor.document.languageId)) {
-      linter.lintDocument(editor.document)
+      linter.lintDocument(editor.document).catch((error) => {
+        console.error('Error linting document:', error)
+      })
     }
   }
 
