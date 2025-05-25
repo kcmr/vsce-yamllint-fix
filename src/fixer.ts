@@ -47,7 +47,18 @@ export class YamlFixer {
     }
     args.push(document.uri.fsPath)
 
-    const result = await execa(config.yamlfixPath, args, { reject: false })
+    // Set YAMLFIX_WHITELINES to '1' to preserve blank lines in the YAML file.
+    // This is an opinionated default to preserve the original format of the YAML files as much as possible.
+    // See: https://lyz-code.github.io/yamlfix/#whitelines-adjusting
+    const env = {
+      ...process.env,
+      YAMLFIX_WHITELINES: '1',
+    }
+
+    const result = await execa(config.yamlfixPath, args, {
+      reject: false,
+      env,
+    })
     return {
       success: result.exitCode === 0,
       error: result.stderr,
