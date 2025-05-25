@@ -1,7 +1,7 @@
 import * as path from 'path'
 import { execa } from 'execa'
 import * as vscode from 'vscode'
-import { findConfigFile, getConfig } from './config'
+import { ensureConfigFile, findConfigFile, getConfig } from './config'
 import { isValidLanguage } from './languages'
 
 interface LintResult {
@@ -25,7 +25,7 @@ export class YamlLinter {
   }
 
   public async lintDocument(document: vscode.TextDocument): Promise<void> {
-    if (!this.shouldLintDocument(document)) {
+    if (!(await this.shouldLintDocument(document))) {
       return
     }
 
@@ -42,11 +42,15 @@ export class YamlLinter {
     }
   }
 
-  private shouldLintDocument(document: vscode.TextDocument): boolean {
+  private async shouldLintDocument(document: vscode.TextDocument): Promise<boolean> {
     const isUnSaved = document.isUntitled
     const isYaml = isValidLanguage(document.languageId)
 
-    return !isUnSaved && isYaml
+    if (isUnSaved || !isYaml) {
+      return false
+    }
+
+    return ensureConfigFile(document, false)
   }
 
   private async runYamllint(
