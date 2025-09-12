@@ -9,13 +9,16 @@ export interface YamlLintFixConfig {
   configFile: string
 }
 
+/** @see https://yamllint.readthedocs.io/en/stable/configuration.html#configuration */
+const DEFAULT_YAMLLINT_CONFIG_FILE_NAMES = ['.yamllint', '.yamllint.yaml', '.yamllint.yml'] as const
+
 export function getConfig(): YamlLintFixConfig {
   const config = vscode.workspace.getConfiguration('yamlLintFix')
   return {
     yamllintPath: config.get('yamllintPath') || 'yamllint',
     yamlfixPath: config.get('yamlfixPath') || 'yamlfix',
     autoFixOnSave: config.get('autoFixOnSave') || false,
-    configFile: config.get('configFile') || '.yamllint',
+    configFile: config.get('configFile'),
   }
 }
 
@@ -23,13 +26,23 @@ export async function findConfigFile(
   workspaceFolder: vscode.WorkspaceFolder
 ): Promise<string | undefined> {
   const config = getConfig()
-  const configPath = path.join(workspaceFolder.uri.fsPath, config.configFile)
-  try {
-    await fs.promises.access(configPath)
-    return configPath
-  } catch {
-    return undefined
+
+  const fileNames: string[] = [...DEFAULT_YAMLLINT_CONFIG_FILE_NAMES]
+  if (config.configFile !== undefined && config.configFile !== '') {
+    fileNames.unshift(config.configFile)
   }
+
+  for (const fileName of fileNames) {
+    const configPath = path.join(workspaceFolder.uri.fsPath, fileName)
+    try {
+      await fs.promises.access(configPath)
+      return configPath
+    } catch {
+      // The file does not exist.
+    }
+  }
+
+  return undefined
 }
 
 export async function ensureConfigFile(
