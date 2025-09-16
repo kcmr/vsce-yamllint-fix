@@ -44,8 +44,9 @@ The extension can be configured through VS Code settings:
 
 - `yamlLintFix.yamllintPath`: Path to yamllint executable (default: "yamllint")
 - `yamlLintFix.yamlfixPath`: Path to yamlfix executable (default: "yamlfix")
-- `yamlLintFix.autoFixOnSave`: Automatically fix YAML files on save (default: false; can be enabled in settings)
-- `yamlLintFix.configFile`: Path to yamllint configuration file (default: ".yamllint")
+- `yamlLintFix.autoFixOnSave`: Automatically fix YAML files on save (default: false)
+- `yamlLintFix.configFile`: Path to yamllint configuration file (default: undefined)
+  - When this value is `undefined`, the extension will search for the config file in [the same ways that yamllint does](https://yamllint.readthedocs.io/en/stable/configuration.html#configuration)). (However, parent directory traversal is not implemented.)
 
 ## Usage
 

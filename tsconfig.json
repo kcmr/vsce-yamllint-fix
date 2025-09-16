@@ -5,7 +5,8 @@
     "moduleResolution": "Node",
     "outDir": "dist",
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "strict": true
   },
   "exclude": ["node_modules", ".vscode-test"]
 }
